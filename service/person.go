@@ -4,9 +4,9 @@ import (
 	"net/http"
 	"strings"
 
-	. "github.com/rootemanuel/api-fiber-crud/dao"
-	. "github.com/rootemanuel/api-fiber-crud/dto"
-	. "github.com/rootemanuel/api-fiber-crud/entity"
+	"github.com/rootemanuel/api-fiber-crud/dao"
+	"github.com/rootemanuel/api-fiber-crud/dto"
+	"github.com/rootemanuel/api-fiber-crud/entity"
 
 	"github.com/go-playground/validator"
 	"github.com/gofiber/fiber"
@@ -20,7 +20,7 @@ type PersonService struct{}
 
 func (m *PersonService) GetPersons(c *fiber.Ctx) {
 
-	dao := PersonDao{}
+	dao := dao.PersonDao{}
 
 	personsResult, errFindPerson := dao.GetPersons()
 	if errFindPerson == mgo.ErrNotFound {
@@ -33,7 +33,7 @@ func (m *PersonService) GetPersons(c *fiber.Ctx) {
 
 func (m *PersonService) GetPerson(c *fiber.Ctx) {
 
-	dao := PersonDao{}
+	dao := dao.PersonDao{}
 	cpf := c.Params("cpf")
 
 	if cpf == "" {
@@ -52,7 +52,7 @@ func (m *PersonService) GetPerson(c *fiber.Ctx) {
 
 func (m *PersonService) DeletePerson(c *fiber.Ctx) {
 
-	dao := PersonDao{}
+	dao := dao.PersonDao{}
 	cpf := c.Params("cpf")
 
 	if cpf == "" {
@@ -77,9 +77,9 @@ func (m *PersonService) DeletePerson(c *fiber.Ctx) {
 
 func (m *PersonService) UpdatePerson(c *fiber.Ctx) {
 
-	dao := PersonDao{}
+	dao := dao.PersonDao{}
 	cpf := c.Params("cpf")
-	req := PersonUpdateReq{}
+	req := dto.PersonUpdateReq{}
 
 	if cpf == "" {
 		c.Status(http.StatusBadRequest)
@@ -96,7 +96,7 @@ func (m *PersonService) UpdatePerson(c *fiber.Ctx) {
 		return
 	}
 
-	personEntity := PersonEntity{
+	personEntity := entity.PersonEntity{
 		Cpf:  cpf,
 		Nome: req.Nome,
 	}
@@ -118,8 +118,8 @@ func (m *PersonService) UpdatePerson(c *fiber.Ctx) {
 
 func (m *PersonService) CreatePerson(c *fiber.Ctx) {
 
-	req := PersonCreateReq{}
-	dao := PersonDao{}
+	req := dto.PersonCreateReq{}
+	dao := dao.PersonDao{}
 
 	if err := c.BodyParser(&req); err != nil {
 		errors := strings.Split(err.Error(), ";")
@@ -131,7 +131,7 @@ func (m *PersonService) CreatePerson(c *fiber.Ctx) {
 		return
 	}
 
-	personEntity := PersonEntity{
+	personEntity := entity.PersonEntity{
 		Cpf:  req.Cpf,
 		Nome: req.Nome,
 	}

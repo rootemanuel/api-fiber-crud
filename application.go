@@ -1,13 +1,13 @@
 package main
 
 import (
-	. "github.com/rootemanuel/api-fiber-crud/service"
+	"github.com/rootemanuel/api-fiber-crud/service"
 
 	"github.com/gofiber/cors"
 	"github.com/gofiber/fiber"
 )
 
-var person = PersonService{}
+var person = service.PersonService{}
 
 const (
 	ServicePort = 8080

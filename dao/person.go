@@ -3,7 +3,7 @@ package dao
 import (
 	"gopkg.in/mgo.v2/bson"
 
-	. "github.com/rootemanuel/api-fiber-crud/entity"
+	"github.com/rootemanuel/api-fiber-crud/entity"
 )
 
 type PersonDao struct {
@@ -14,7 +14,7 @@ const (
 	COLL_CRUD = "crud"
 )
 
-func (m *PersonDao) CreatePerson(personEntity PersonEntity) error {
+func (m *PersonDao) CreatePerson(personEntity entity.PersonEntity) error {
 	session := GetSession()
 	defer session.Close()
 
@@ -22,11 +22,11 @@ func (m *PersonDao) CreatePerson(personEntity PersonEntity) error {
 	return err
 }
 
-func (m *PersonDao) GetPerson(cpf string) (*PersonEntity, error) {
+func (m *PersonDao) GetPerson(cpf string) (*entity.PersonEntity, error) {
 	session := GetSession()
 	defer session.Close()
 
-	var result PersonEntity
+	var result entity.PersonEntity
 	queryAccount := make(bson.M, 0)
 
 	if cpf != "" {
@@ -38,11 +38,11 @@ func (m *PersonDao) GetPerson(cpf string) (*PersonEntity, error) {
 	return &result, err
 }
 
-func (m *PersonDao) GetPersons() ([]PersonEntity, error) {
+func (m *PersonDao) GetPersons() ([]entity.PersonEntity, error) {
 	session := GetSession()
 	defer session.Close()
 
-	result := make([]PersonEntity, 0)
+	result := make([]entity.PersonEntity, 0)
 	err := session.DB(DB).C(COLL_CRUD).Find(nil).All(&result)
 
 	return result, err
@@ -59,7 +59,7 @@ func (m *PersonDao) DeletePerson(cpf string) error {
 	return session.DB(DB).C(COLL_CRUD).Remove(selector)
 }
 
-func (m *PersonDao) UpdatePerson(personEntity PersonEntity) error {
+func (m *PersonDao) UpdatePerson(personEntity entity.PersonEntity) error {
 	session := GetSession()
 	defer session.Close()
 

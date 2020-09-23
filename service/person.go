@@ -132,5 +132,5 @@ func (m *PersonService) CreatePerson(c *fiber.Ctx) error {
 }
 
 func (m *PersonService) Ping(c *fiber.Ctx) error {
-	return c.SendString("0WN3D 👋!")
+	return c.SendStatus(http.StatusOK)
 }

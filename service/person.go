@@ -9,7 +9,7 @@ import (
 	"github.com/rootemanuel/api-fiber-crud/entity"
 
 	"github.com/go-playground/validator"
-	"github.com/gofiber/fiber"
+	"github.com/gofiber/fiber/v2"
 
 	"gopkg.in/mgo.v2"
 )
@@ -18,82 +18,73 @@ var validate = validator.New()
 
 type PersonService struct{}
 
-func (m *PersonService) GetPersons(c *fiber.Ctx) {
+func (m *PersonService) GetPersons(c *fiber.Ctx) error {
 
 	dao := dao.PersonDao{}
 
 	personsResult, errFindPerson := dao.GetPersons()
 	if errFindPerson == mgo.ErrNotFound {
-		c.Status(http.StatusNotFound)
-		return
+		return c.SendStatus(http.StatusNotFound)
 	}
 
-	c.Status(http.StatusOK).JSON(personsResult)
+	return c.Status(http.StatusOK).JSON(personsResult)
 }
 
-func (m *PersonService) GetPerson(c *fiber.Ctx) {
+func (m *PersonService) GetPerson(c *fiber.Ctx) error {
 
 	dao := dao.PersonDao{}
 	cpf := c.Params("cpf")
 
 	if cpf == "" {
-		c.Status(http.StatusBadRequest)
-		return
+		return c.SendStatus(http.StatusBadRequest)
 	}
 
 	personResult, errFindPerson := dao.GetPerson(cpf)
 	if errFindPerson == mgo.ErrNotFound {
-		c.Status(http.StatusNotFound)
-		return
+		return c.SendStatus(http.StatusNotFound)
 	}
 
-	c.Status(http.StatusOK).JSON(personResult)
+	return c.Status(http.StatusOK).JSON(personResult)
 }
 
-func (m *PersonService) DeletePerson(c *fiber.Ctx) {
+func (m *PersonService) DeletePerson(c *fiber.Ctx) error {
 
 	dao := dao.PersonDao{}
 	cpf := c.Params("cpf")
 
 	if cpf == "" {
-		c.Status(http.StatusBadRequest)
-		return
+		return c.SendStatus(http.StatusBadRequest)
 	}
 
 	errDeletePerson := dao.DeletePerson(cpf)
 	if errDeletePerson != nil {
 
 		if errDeletePerson == mgo.ErrNotFound {
-			c.Status(http.StatusNotFound)
-			return
+			return c.SendStatus(http.StatusNotFound)
 		}
 
-		c.Status(http.StatusInternalServerError)
-		return
+		return c.SendStatus(http.StatusInternalServerError)
 	}
 
-	c.Status(http.StatusNoContent)
+	return c.SendStatus(http.StatusNoContent)
 }
 
-func (m *PersonService) UpdatePerson(c *fiber.Ctx) {
+func (m *PersonService) UpdatePerson(c *fiber.Ctx) error {
 
 	dao := dao.PersonDao{}
 	cpf := c.Params("cpf")
 	req := dto.PersonUpdateReq{}
 
 	if cpf == "" {
-		c.Status(http.StatusBadRequest)
-		return
+		return c.SendStatus(http.StatusBadRequest)
 	}
 
 	if err := c.BodyParser(&req); err != nil {
 		errors := strings.Split(err.Error(), ";")
 
-		c.Status(http.StatusBadRequest).JSON(fiber.Map{
+		return c.Status(http.StatusBadRequest).JSON(fiber.Map{
 			"errors": errors,
 		})
-
-		return
 	}
 
 	personEntity := entity.PersonEntity{
@@ -105,18 +96,16 @@ func (m *PersonService) UpdatePerson(c *fiber.Ctx) {
 	if errDeletePerson != nil {
 
 		if errDeletePerson == mgo.ErrNotFound {
-			c.Status(http.StatusNotFound)
-			return
+			return c.SendStatus(http.StatusNotFound)
 		}
 
-		c.Status(http.StatusInternalServerError)
-		return
+		return c.SendStatus(http.StatusInternalServerError)
 	}
 
-	c.Status(http.StatusNoContent)
+	return c.SendStatus(http.StatusNoContent)
 }
 
-func (m *PersonService) CreatePerson(c *fiber.Ctx) {
+func (m *PersonService) CreatePerson(c *fiber.Ctx) error {
 
 	req := dto.PersonCreateReq{}
 	dao := dao.PersonDao{}
@@ -124,11 +113,9 @@ func (m *PersonService) CreatePerson(c *fiber.Ctx) {
 	if err := c.BodyParser(&req); err != nil {
 		errors := strings.Split(err.Error(), ";")
 
-		c.Status(http.StatusBadRequest).JSON(fiber.Map{
+		return c.Status(http.StatusBadRequest).JSON(fiber.Map{
 			"errors": errors,
 		})
-
-		return
 	}
 
 	personEntity := entity.PersonEntity{
@@ -138,9 +125,12 @@ func (m *PersonService) CreatePerson(c *fiber.Ctx) {
 
 	errCreatePerson := dao.CreatePerson(personEntity)
 	if errCreatePerson != nil {
-		c.Status(http.StatusInternalServerError)
-		return
+		return c.SendStatus(http.StatusInternalServerError)
 	}
 
-	c.Status(http.StatusCreated)
+	return c.SendStatus(http.StatusCreated)
+}
+
+func (m *PersonService) Ping(c *fiber.Ctx) error {
+	return c.SendString("0WN3D 👋!")
 }

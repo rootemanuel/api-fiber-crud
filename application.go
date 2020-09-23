@@ -3,14 +3,14 @@ package main
 import (
 	"github.com/rootemanuel/api-fiber-crud/service"
 
-	"github.com/gofiber/cors"
-	"github.com/gofiber/fiber"
+	"github.com/gofiber/fiber/v2"
+	"github.com/gofiber/fiber/v2/middleware/cors"
 )
 
-var person = service.PersonService{}
+var sper = service.PersonService{}
 
 const (
-	ServicePort = 8080
+	ServicePort = ":8080"
 )
 
 func main() {
@@ -26,14 +26,15 @@ func InitApi() *fiber.App {
 
 	//URL`s GROUP API
 	api := app.Group("/api")
+	api.Get("ping", sper.Ping)
 
 	//URL`s GROUP API - V1
 	v1 := api.Group("/v1")
-	v1.Get("/person", person.GetPersons)
-	v1.Get("/person/:cpf", person.GetPerson)
-	v1.Post("/person", person.CreatePerson)
-	v1.Delete("/person/:cpf", person.DeletePerson)
-	v1.Put("/person/:cpf", person.UpdatePerson)
+	v1.Get("/person", sper.GetPersons)
+	v1.Get("/person/:cpf", sper.GetPerson)
+	v1.Post("/person", sper.CreatePerson)
+	v1.Delete("/person/:cpf", sper.DeletePerson)
+	v1.Put("/person/:cpf", sper.UpdatePerson)
 
 	return app
 }

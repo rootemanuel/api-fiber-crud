@@ -26,7 +26,8 @@ func InitApi() *fiber.App {
 
 	//URL`s GROUP API
 	api := app.Group("/api")
-	api.Get("ping", sper.Ping)
+	api.Get("/ping", sper.Ping)
+	api.Get("/test", sper.TestCache)
 
 	//URL`s GROUP API - V1
 	v1 := api.Group("/v1")

@@ -4,6 +4,7 @@ import (
 	"net/http"
 	"strings"
 
+	"github.com/rootemanuel/api-fiber-crud/cache"
 	"github.com/rootemanuel/api-fiber-crud/dao"
 	"github.com/rootemanuel/api-fiber-crud/dto"
 	"github.com/rootemanuel/api-fiber-crud/entity"
@@ -28,6 +29,13 @@ func (m *PersonService) GetPersons(c *fiber.Ctx) error {
 	}
 
 	return c.Status(http.StatusOK).JSON(personsResult)
+}
+
+func (m *PersonService) TestCache(c *fiber.Ctx) error {
+	cacheAccount := cache.AccountCache{}
+
+	root := cacheAccount.Teste()
+	return c.Status(http.StatusOK).JSON(root)
 }
 
 func (m *PersonService) GetPerson(c *fiber.Ctx) error {
